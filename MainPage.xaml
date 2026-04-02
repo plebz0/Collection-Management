@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Collection_Management.MainPage"
+             Title="Zarządzanie Kolekcjami">
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="10">
+
+        <!-- Header -->
+        <Label Grid.Row="0" 
+               Text="Moje Kolekcje" 
+               FontSize="24" 
+               FontAttributes="Bold"
+               Margin="10,10,10,0"/>
+
+
+        <!-- Collections List -->
+        <CollectionView Grid.Row="1" 
+                        x:Name="CollectionsCollectionView"
+                        SelectionMode="Single"
+                        SelectionChangedCommand="{Binding CollectionSelectedCommand}"
+                        SelectionChangedCommandParameter="{Binding SelectedItem, Source={x:Reference CollectionsCollectionView}}"
+                        Margin="0,10">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="10"/>
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame BorderColor="#E0E0E0" 
+                           CornerRadius="10" 
+                           Padding="15" 
+                           Margin="5,0">
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                            <Label Grid.Row="0" Grid.Column="0"
+                                   Text="{Binding Name}" 
+                                   FontAttributes="Bold"
+                                   FontSize="18"/>
+                            <Label Grid.Row="1" Grid.Column="0"
+                                   Text="{Binding Type, StringFormat='Typ: {0}'}" 
+                                   FontSize="12"
+                                   TextColor="Gray"/>
+                            <Label Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"
+                                   Text="{Binding Items.Count, StringFormat='Elementów: {0}'}" 
+                                   FontSize="14"
+                                   VerticalOptions="Center"
+                                   TextColor="#2196F3"/>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Buttons -->
+        <StackLayout Grid.Row="2" 
+                     Orientation="Horizontal" 
+                     Spacing="10"
+                     Margin="10,10">
+            <Button x:Name="AddCollectionBtn"
+                    Text="Nowa Kolekcja" 
+                    FontAttributes="Bold"
+                    HorizontalOptions="FillAndExpand"
+                    Clicked="OnAddCollectionClicked"/>
+            <Button x:Name="EditCollectionBtn"
+                    Text="Edytuj" 
+                    FontAttributes="Bold"
+                    HorizontalOptions="FillAndExpand"
+                    Clicked="OnEditCollectionClicked"/>
+            <Button x:Name="DeleteCollectionBtn"
+                    Text="Usuń" 
+                    FontAttributes="Bold"
+                    HorizontalOptions="FillAndExpand"
+                    Clicked="OnDeleteCollectionClicked"/>
+        </StackLayout>
+    </Grid>
+
+</ContentPage>
