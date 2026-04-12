@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Text;
 using System.IO;
 
 namespace Collection_Management.Models
 {
-    public class CollectionList
+    public class CollectionList : INotifyPropertyChanged
     {
         public ObservableCollection<Collection> Collections { get; set; }
         private string DataPath { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public CollectionList()
         {
@@ -54,15 +57,10 @@ namespace Collection_Management.Models
                     string[] lines = File.ReadAllLines(file);
                     if (lines.Length > 0)
                     {
-                        // Pierwszy wiersz to metadane kolekcji
-                        var collectionData = lines[0].Split('|');
-                        if (collectionData.Length >= 2)
-                        {
-                            collection.Name = collectionData[0];
-                            collection.Type = collectionData[1];
-                        }
+                        // First line contains collection metadata (Name|Type|Properties|EnumValues)
+                        collection = Collection.FromString(lines[0]);
 
-                        // Pozostałe wiersze to elementy
+                        // Remaining lines are items
                         for (int i = 1; i < lines.Length; i++)
                         {
                             if (!string.IsNullOrWhiteSpace(lines[i]))
@@ -168,14 +166,23 @@ namespace Collection_Management.Models
                 Collections[index] = collection;
                 SaveCollections();
             }
+            OnPropertyChanged(nameof(Collections));
         }
 
         public void AddItemToCollection(Collection collection, Item item)
         {
             if (collection != null)
             {
-                // collection.Items.Add(item);
-                collection.AddItem(item);
+                // Ensure item has all collection properties with default values
+                foreach (var prop in collection.PropertiesTypes)
+                {
+                    if (!item.Properties.Exists(p => p.Name == prop.Key))
+                    {
+                        item.Properties.Add(collection.CreatePropertyWithDefaultValue(prop.Key, prop.Value));
+                    }
+                }
+
+                collection.Items.Add(item);
                 SaveCollections();
             }
         }
@@ -200,6 +207,11 @@ namespace Collection_Management.Models
                     SaveCollections();
                 }
             }
+        }
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 } 

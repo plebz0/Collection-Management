@@ -1,6 +1,9 @@
 namespace Collection_Management;
 
 using Collection_Management.Models;
+using System.Collections.ObjectModel;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Storage;
 
 public partial class CollectionDetailPage : ContentPage
 {
@@ -13,17 +16,48 @@ public partial class CollectionDetailPage : ContentPage
         InitializeComponent();
         this.collection = collection;
         this.collectionList = collectionList;
-        
+
         BindingContext = new { Collection = collection };
-        ItemsCollectionView.ItemsSource = collection.Items;
+
+        // Subscribe to property changes for all items
+        foreach (var item in collection.Items)
+        {
+            item.PropertyChanged += Item_PropertyChanged;
+        }
+
+        // Sort items with sold items at the end and bind
+        UpdateItemsDisplay();
+    }
+
+    private void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(Item.Status))
+        {
+            // Save collection and re-sort items
+            collectionList.SaveCollections();
+            UpdateItemsDisplay();
+        }
+    }
+
+    private void UpdateItemsDisplay()
+    {
+        var sortedItems = collection.Items
+            .OrderBy(i => i.Status == ItemStatus.Sold ? 1 : 0)
+            .ThenBy(i => i.Name)
+            .ToList();
+
+        ItemsCollectionView.ItemsSource = new ObservableCollection<Item>(sortedItems);
     }
 
     private async void OnAddItemClicked(object sender, EventArgs e)
     {
         string name = await DisplayPromptAsync("Nowy Element", "Podaj nazwę elementu:");
-        //checkForDuplicateItem(name);
         if (string.IsNullOrWhiteSpace(name))
             return;
+
+        if(checkForDuplicateItem(name))
+            if(await GetAnswerForDuplicateItem())
+                return;
 
         string description = await DisplayPromptAsync("Nowy Element", "Podaj opis (opcjonalnie):", "OK");
 
@@ -36,26 +70,73 @@ public partial class CollectionDetailPage : ContentPage
 
         Item newItem = new Item(name, description ?? "", quantity, condition);
 
-        // Dodaj możliwość dodania właściwości dla nowego elementu
-        bool addProps = await DisplayAlert("Właściwości", "Chcesz dodać własne właściwości do tego elementu?", "Tak", "Nie");
-        if (addProps)
+        // Add default custom properties to new item
+        foreach (var prop in collection.PropertiesTypes)
         {
-            await EditItemProperties(newItem);
+            newItem.Properties.Add(collection.CreatePropertyWithDefaultValue(prop.Key, prop.Value));
+        }
+
+        // Ask if user wants to add a picture
+        bool addPicture = await DisplayAlert("Zdjęcie", "Czy chcesz dodać zdjęcie do elementu?", "Tak", "Nie");
+        if (addPicture)
+        {
+            await PickAndSetItemPicture(newItem);
+        }
+
+        // If collection has custom properties, automatically show edit dialog
+        if (collection.PropertiesTypes.Count > 0)
+        {
+            await EditItemCustomProperties(newItem);
         }
 
         collectionList.AddItemToCollection(collection, newItem);
+        newItem.PropertyChanged += Item_PropertyChanged;
+        UpdateItemsDisplay();
     }
 
-   private void checkForDuplicateItem(string name)
+    private async Task EditItemCustomProperties(Item item)
     {
-        foreach (var item in collection.Items)
+        bool editMore = true;
+        while (editMore)
         {
-            if (item.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+            // Only show custom properties (from collection.PropertiesTypes)
+            var customProps = item.Properties.Where(p => collection.PropertiesTypes.ContainsKey(p.Name)).ToList();
+
+            string[] options = customProps.Select(p => $"{p.Name}: {p.Value}").ToArray();
+            var menuOptions = options.ToList();
+            menuOptions.Add("Gotowe");
+
+            string selected = await DisplayActionSheet("Uzupełnij właściwości elementu", "Anuluj", null, menuOptions.ToArray());
+
+            if (selected == "Anuluj" || selected == "Gotowe")
             {
-                DisplayAlert("Błąd", "Element o tej nazwie już istnieje w kolekcji. Czy napewno chcesz mieć powtórkę", "Tak", "Nie");
-                return;
+                editMore = false;
+            }
+            else
+            {
+                // Edytuj wybraną właściwość
+                int propIndex = customProps.FindIndex(p => $"{p.Name}: {p.Value}" == selected);
+                if (propIndex >= 0)
+                {
+                    await EditProperty(item, customProps[propIndex]);
+                }
             }
         }
+    }
+
+    private async Task<bool> GetAnswerForDuplicateItem()
+    {
+        return await DisplayAlert("Uwaga", "Element o tej nazwie już istnieje w kolekcji. Czy napewno chcesz mieć powtórkę", "Tak", "Nie");
+    }
+
+    //Perzenieś do Models
+    private bool checkForDuplicateItem(string name)
+    {
+        bool hasDuplicate = collection.Items.Any(item => 
+            item.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        
+        // Zwróć true jeśli ma duplikat I użytkownik go nie potwierdził
+        return hasDuplicate;
     }
     private async void OnEditItemClicked(object sender, EventArgs e)
     {
@@ -72,7 +153,7 @@ public partial class CollectionDetailPage : ContentPage
             string quantityStr = await DisplayPromptAsync("Edytuj Element", "Ilość:", item.Quantity.ToString());
             int quantity = int.TryParse(quantityStr, out int qty) ? qty : item.Quantity;
 
-            string condition = await DisplayActionSheet("Edytuj Element", "Anuluj", null, "Mint", "Good", "Fair", "Poor");
+            string condition = await DisplayActionSheet("Edytuj Element", "Anuluj", null, "Brand new", "Good", "Fair", "Poor");
             if (condition == "Anuluj")
                 condition = item.Condition;
 
@@ -81,99 +162,24 @@ public partial class CollectionDetailPage : ContentPage
             // Kopiuj istniejące właściwości
             updatedItem.Properties = new List<Property>(item.Properties);
 
+            // Dodaj brakujące właściwości z domyślnymi wartościami (jeśli zostały dodane do kolekcji)
+            foreach (var prop in collection.PropertiesTypes)
+            {
+                if (!updatedItem.Properties.Exists(p => p.Name == prop.Key))
+                {
+                    updatedItem.Properties.Add(collection.CreatePropertyWithDefaultValue(prop.Key, prop.Value));
+                }
+            }
+
             // Pozwól edytować właściwości
-            await EditItemProperties(updatedItem);
+            await EditItemCustomProperties(updatedItem);
 
             collectionList.UpdateItemInCollection(collection, item, updatedItem);
+            UpdateItemsDisplay();
         }
         else
         {
             await DisplayAlert("Błąd", "Wybierz element do edycji", "OK");
-        }
-    }
-
-    private async Task EditItemProperties(Item item)
-    {
-        bool editMore = true;
-        while (editMore)
-        {
-            string[] options = item.Properties.Select(p => $"{p.Name}: {p.Value}").ToArray();
-            var menuOptions = options.ToList();
-            menuOptions.Add("Dodaj nową właściwość");
-            menuOptions.Add("Gotowe");
-
-            string selected = await DisplayActionSheet("Zarządzaj właściwościami", "Anuluj", null, menuOptions.ToArray());
-
-            if (selected == "Anuluj" || selected == "Gotowe")
-            {
-                editMore = false;
-            }
-            else if (selected == "Dodaj nową właściwość")
-            {
-                await AddNewProperty(item);
-            }
-            else
-            {
-                // Edytuj istniejącą właściwość
-                int propIndex = item.Properties.FindIndex(p => $"{p.Name}: {p.Value}" == selected);
-                if (propIndex >= 0)
-                {
-                    await EditProperty(item, item.Properties[propIndex]);
-                }
-            }
-        }
-    }
-
-    private async Task AddNewProperty(Item item)
-    {
-        string propName = await DisplayPromptAsync("Nowa właściwość", "Podaj nazwę właściwości:");
-        if (string.IsNullOrWhiteSpace(propName))
-            return;
-
-        string typeChoice = await DisplayActionSheet("Typ właściwości", "Anuluj", null, "Tekst", "Liczba", "Lista wyboru");
-        if (typeChoice == "Anuluj")
-            return;
-
-        PropertyType propType = typeChoice switch
-        {
-            "Tekst" => PropertyType.String,
-            "Liczba" => PropertyType.Number,
-            "Lista wyboru" => PropertyType.Enum,
-            _ => PropertyType.String
-        };
-
-        Property newProp = new Property(propName, propType);
-
-        // Ustaw wartość w zależności od typu
-        string value = null;
-        if (propType == PropertyType.Enum)
-        {
-            // Jeśli kolekcja ma zdefiniowane wartości enum dla tej właściwości
-            if (collection.EnumPropertiesValues.TryGetValue(propName, out var enumOptions) && enumOptions.Count > 0)
-            {
-                value = await DisplayActionSheet($"Wybierz wartość dla {propName}", "Anuluj", null, enumOptions.ToArray());
-                if (value == "Anuluj")
-                    return;
-            }
-            else
-            {
-                value = await DisplayPromptAsync($"Wartość dla {propName}", "Podaj wartość:", "");
-            }
-        }
-        else
-        {
-            value = typeChoice switch
-            {
-                "Tekst" => await DisplayPromptAsync($"Wartość dla {propName}", "Podaj tekst:", ""),
-                "Liczba" => await DisplayPromptAsync($"Wartość dla {propName}", "Podaj liczbę:", "0"),
-                _ => ""
-            };
-        }
-
-        if (!string.IsNullOrWhiteSpace(value))
-        {
-            newProp.Value = value;
-            item.Properties.Add(newProp);
         }
     }
 
@@ -229,6 +235,7 @@ public partial class CollectionDetailPage : ContentPage
             if (confirm)
             {
                 collectionList.RemoveItemFromCollection(collection, item);
+                UpdateItemsDisplay();
             }
         }
         else
@@ -242,12 +249,16 @@ public partial class CollectionDetailPage : ContentPage
         var button = sender as Button;
         if (button?.BindingContext is Item item)
         {
-            string action = await DisplayActionSheet("Opcje", "Anuluj", null, "Edytuj", "Usuń");
-            
+            string action = await DisplayActionSheet("Opcje", "Anuluj", null, "Edytuj", "Zmień zdjęcie", "Usuń");
+
             if (action == "Edytuj")
             {
                 ItemsCollectionView.SelectedItem = item;
                 OnEditItemClicked(null, null);
+            }
+            else if (action == "Zmień zdjęcie")
+            {
+                await PickAndSetItemPicture(item);
             }
             else if (action == "Usuń")
             {
@@ -260,7 +271,31 @@ public partial class CollectionDetailPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        ItemsCollectionView.ItemsSource = collection.Items;
+        UpdateItemsDisplay();
+    }
+
+    private async Task PickAndSetItemPicture(Item item)
+    {
+        try
+        {
+            var result = await FilePicker.PickAsync(new PickOptions
+            {
+                PickerTitle = "Wybierz zdjęcie",
+                FileTypes = FilePickerFileType.Images
+            });
+
+            if (result != null)
+            {
+                item.AddPicture(result.FullPath);
+                collectionList.SaveCollections();
+                UpdateItemsDisplay();
+                await DisplayAlert("Sukces", "Zdjęcie zostało dodane", "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Błąd", $"Nie udało się dodać zdjęcia: {ex.Message}", "OK");
+        }
     }
 
     private async void OnManageCollectionPropertiesClicked(object sender, EventArgs e)
@@ -322,14 +357,18 @@ public partial class CollectionDetailPage : ContentPage
 
         if (propType == PropertyType.Enum)
         {
-            string enumValues = await DisplayPromptAsync("Lista wyboru", "Podaj wartości oddzielone przecinkami (np: opcja1,opcja2):", "");
+            string enumValues = await DisplayPromptAsync("Lista wyboru", "Podaj wartości oddzielone przecinkami (np: opcja1,opcja2):", "OK");
             if (!string.IsNullOrWhiteSpace(enumValues))
             {
                 var values = new List<string>(enumValues.Split(',').Select(v => v.Trim()));
-                collection.EnumPropertiesValues[propName] = values;
+                collection.EnumPropertiesValues[propName] = values; // MODYFIKACJA MODELU!!!!!!
             }
         }
+
+        // Refresh the items display to show new properties
+        UpdateItemsDisplay();
     }
+    
 
     private async Task EditCollectionProperty(string propName, PropertyType propType)
     {
@@ -348,7 +387,7 @@ public partial class CollectionDetailPage : ContentPage
                     _ => PropertyType.String
                 };
 
-                collection.PropertiesTypes[propName] = newType;
+                collection.PropertiesTypes[propName] = newType; // MODYFIKACJA MODELU!!!!!!
 
                 if (newType == PropertyType.Enum)
                 {
@@ -356,13 +395,16 @@ public partial class CollectionDetailPage : ContentPage
                     if (!string.IsNullOrWhiteSpace(enumValues))
                     {
                         var values = new List<string>(enumValues.Split(',').Select(v => v.Trim()));
-                        collection.EnumPropertiesValues[propName] = values;
+                        collection.EnumPropertiesValues[propName] = values; // MODYFIKACJA MODELU!!!!!!
                     }
                 }
                 else if (collection.EnumPropertiesValues.ContainsKey(propName))
                 {
-                    collection.EnumPropertiesValues.Remove(propName);
+                    collection.EnumPropertiesValues.Remove(propName); // MODYFIKACJA MODELU!!!!!!
                 }
+
+                // Refresh the items display
+                UpdateItemsDisplay();
             }
         }
         else if (action == "Usuń")
@@ -370,20 +412,28 @@ public partial class CollectionDetailPage : ContentPage
             bool confirm = await DisplayAlert("Potwierdzenie", $"Usunąć właściwość \"{propName}\" ze wszystkich elementów?", "Tak", "Nie");
             if (confirm)
             {
-                collection.PropertiesTypes.Remove(propName);
+                collection.PropertiesTypes.Remove(propName); // MODYFIKACJA MODELU!!!!!!
                 if (collection.EnumPropertiesValues.ContainsKey(propName))
                 {
-                    collection.EnumPropertiesValues.Remove(propName);
+                    collection.EnumPropertiesValues.Remove(propName); // MODYFIKACJA MODELU!!!!!!
                 }
                 foreach (var item in collection.Items)
                 {
                     var prop = item.Properties.FirstOrDefault(p => p.Name == propName);
                     if (prop != null)
                     {
-                        item.Properties.Remove(prop);
+                        item.Properties.Remove(prop); // MODYFIKACJA MODELU!!!!!!
                     }
                 }
+
+                // Refresh the items display
+                UpdateItemsDisplay();
             }
         }
+    }
+
+    private async void OnSummaryClicked(object sender, EventArgs e)
+    {
+        await Navigation.PushAsync(new CollectionSummaryPage(collection));
     }
 }

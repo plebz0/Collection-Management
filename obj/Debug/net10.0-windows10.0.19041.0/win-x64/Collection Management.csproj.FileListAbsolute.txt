@@ -1,15 +1,3 @@
-C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\Collection Management.csproj.AssemblyReference.cache
-C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\mauiimage.inputs
-C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\mauifont.inputs
-C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\mauisplash.inputs
-C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\mauimanifest.stamp
-C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\Platforms\Windows\App.g.i.cs
-C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\Platforms\Windows\App.g.cs
-C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\XamlTypeInfo.g.cs
-C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\Platforms\Windows\App.xaml
-C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\Platforms\Windows\App.xbf
-C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\XamlSaveStateFile.xml
-C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\Collection Management.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\pc\source\repos\Collection Management\Collection Management\bin\Debug\net10.0-windows10.0.19041.0\win-x64\Platforms\Windows\App.xbf
 C:\Users\pc\source\repos\Collection Management\Collection Management\bin\Debug\net10.0-windows10.0.19041.0\win-x64\AboutAssets.txt
 C:\Users\pc\source\repos\Collection Management\Collection Management\bin\Debug\net10.0-windows10.0.19041.0\win-x64\splashSplashScreen.scale-100.png
@@ -429,6 +417,18 @@ C:\Users\pc\source\repos\Collection Management\Collection Management\bin\Debug\n
 C:\Users\pc\source\repos\Collection Management\Collection Management\bin\Debug\net10.0-windows10.0.19041.0\win-x64\Microsoft.Web.WebView2.Core.Projection.dll
 C:\Users\pc\source\repos\Collection Management\Collection Management\bin\Debug\net10.0-windows10.0.19041.0\win-x64\Microsoft.UI.pri
 C:\Users\pc\source\repos\Collection Management\Collection Management\bin\Debug\net10.0-windows10.0.19041.0\win-x64\Microsoft.UI.Xaml.Controls.pri
+C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\Collection Management.csproj.AssemblyReference.cache
+C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\mauiimage.inputs
+C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\mauifont.inputs
+C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\mauisplash.inputs
+C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\mauimanifest.stamp
+C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\Platforms\Windows\App.g.i.cs
+C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\Platforms\Windows\App.g.cs
+C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\XamlTypeInfo.g.cs
+C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\Platforms\Windows\App.xaml
+C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\Platforms\Windows\App.xbf
+C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\XamlSaveStateFile.xml
+C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\Collection Management.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\resizetizer\sp\splashSplashScreen.scale-100.png
 C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\resizetizer\sp\splashSplashScreen.scale-125.png
 C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\resizetizer\sp\splashSplashScreen.scale-150.png
@@ -494,6 +494,7 @@ C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\n
 C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\Collection Management.AssemblyInfoInputs.cache
 C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\Collection Management.AssemblyInfo.cs
 C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\Collection Management.csproj.CoreCompileInputs.cache
+C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\Collection Management.sourcelink.json
 C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\XamlC.stamp
 C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\Collecti.E0794DFA.Up2Date
 C:\Users\pc\source\repos\Collection Management\Collection Management\obj\Debug\net10.0-windows10.0.19041.0\win-x64\Collection Management.dll

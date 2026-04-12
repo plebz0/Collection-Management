@@ -87,4 +87,18 @@ public partial class MainPage : ContentPage
         collectionList.LoadCollections();
         CollectionsCollectionView.ItemsSource = collectionList.Collections;
     }
+
+    private async void OnSummaryClicked(object sender, EventArgs e)
+    {
+        if (CollectionsCollectionView.SelectedItem is Collection collection)
+        {
+            await Navigation.PushAsync(new CollectionSummaryPage(collection));
+        }
+        else
+        {
+            await DisplayAlert("Błąd", "Wybierz kolekcję, aby zobaczyć podsumowanie", "OK");
+        }
+    }
 }
+
+   

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Text;
 
 namespace Collection_Management.Models
 {
-    public class Collection
+    public class Collection : INotifyPropertyChanged
     {
         public string Name { get; set; }
         public string Type { get; set; }
@@ -13,6 +14,8 @@ namespace Collection_Management.Models
 
         public OrderedDictionary<string, List<string>> EnumPropertiesValues { get; set; }
         public OrderedDictionary<string, PropertyType> PropertiesTypes { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public Collection()
         {
@@ -79,9 +82,9 @@ namespace Collection_Management.Models
                 // Wczytaj enum wartości jeśli istnieją
                 if (parts.Length > 3 && !string.IsNullOrWhiteSpace(parts[3]))
                 {
-                    string[] enumList = parts[3].Split('|');
-                    foreach (string enumStr in enumList)
+                    for(int i = 3; i < parts.Length; i++)
                     {
+                        string enumStr = parts[i];
                         if (!string.IsNullOrWhiteSpace(enumStr))
                         {
                             string[] enumParts = enumStr.Split('=');
@@ -93,6 +96,7 @@ namespace Collection_Management.Models
                             }
                         }
                     }
+
                 }
 
                 return collection;
@@ -111,10 +115,40 @@ namespace Collection_Management.Models
                 }
                 foreach (var item in Items)
                 {
-                    item.Properties.Add( new Property(propertyName, propertyType));
+                    item.addNewProperty(CreatePropertyWithDefaultValue(propertyName, propertyType));
                 }
             }
-        }   
+
+        }
+
+        public Property CreatePropertyWithDefaultValue(string propertyName, PropertyType propertyType)
+        {
+            var property = new Property(propertyName, propertyType);
+
+            // Set default value based on type
+            switch (propertyType)
+            {
+                case PropertyType.String:
+                    property.Value = "";
+                    break;
+                case PropertyType.Number:
+                    property.Value = "0";
+                    break;
+                case PropertyType.Enum:
+                    // Use first enum value if available, otherwise empty
+                    if (EnumPropertiesValues.TryGetValue(propertyName, out var enumValues) && enumValues.Count > 0)
+                    {
+                        property.Value = enumValues[0];
+                    }
+                    else
+                    {
+                        property.Value = "";
+                    }
+                    break;
+            }
+
+            return property;
+        }
 
         public void AddItem(string name, string description = "", int quantity = 1, string condition = "Good")
         {
@@ -122,7 +156,7 @@ namespace Collection_Management.Models
 
             foreach (var prop in PropertiesTypes)
             {
-                newItem.Properties.Add(new Property(prop.Key, prop.Value));
+                newItem.Properties.Add(CreatePropertyWithDefaultValue(prop.Key, prop.Value));
             }
 
             Items.Add(newItem);
@@ -133,10 +167,15 @@ namespace Collection_Management.Models
             {
                 if (!item.Properties.Exists(p => p.Name == prop.Key))
                 {
-                    item.Properties.Add(new Property(prop.Key, prop.Value));
+                    item.Properties.Add(CreatePropertyWithDefaultValue(prop.Key, prop.Value));
                 }
             }
             Items.Add(item);
+        }
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -70,6 +70,11 @@
                     FontAttributes="Bold"
                     HorizontalOptions="FillAndExpand"
                     Clicked="OnDeleteCollectionClicked"/>
+            <Button x:Name="SummaryBtn"
+                    Text="Podsumowanie" 
+                    FontAttributes="Bold"
+                    HorizontalOptions="FillAndExpand"
+                    Clicked="OnSummaryClicked"/>
         </StackLayout>
     </Grid>
 
