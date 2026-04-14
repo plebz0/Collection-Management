@@ -126,15 +126,5 @@
     "C:\\Users\\pc\\.nuget\\packages\\xamarin.kotlinx.serialization.core.jvm\\1.9.0.1\\xamarin.kotlinx.serialization.core.jvm.1.9.0.1.nupkg.sha512",
     "C:\\Users\\pc\\.nuget\\packages\\microsoft.windows.sdk.net.ref\\10.0.19041.57\\microsoft.windows.sdk.net.ref.10.0.19041.57.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1900",
-      "level": "Warning",
-      "message": "Podczas pobierania danych o lukach w zabezpieczeniach pakietu wystąpił błąd: Nie można załadować indeksu usługi dla źródła https://api.nuget.org/v3/index.json.",
-      "projectPath": "C:\\Users\\pc\\source\\repos\\Collection Management\\Collection Management\\Collection Management.csproj",
-      "warningLevel": 1,
-      "filePath": "C:\\Users\\pc\\source\\repos\\Collection Management\\Collection Management\\Collection Management.csproj",
-      "targetGraphs": []
-    }
-  ]
+  "logs": []
 }

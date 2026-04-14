@@ -22,7 +22,7 @@
         <Grid Grid.Row="0" 
               BackgroundColor="#371CFC"
               Padding="20,15,20,15"
-              RowDefinitions="Auto,Auto"
+              RowDefinitions="Auto,Auto,Auto"
               RowSpacing="8">
             <Label Text="{Binding Collection.Name}" 
                    FontSize="32" 
@@ -32,6 +32,11 @@
                    Text="{Binding Collection.Type, StringFormat='Typ: {0}'}" 
                    FontSize="16" 
                    TextColor="#1CD6FC"/>
+            <Label Grid.Row="2"
+                   Text="Proszę nie używać |" 
+                   FontSize="12" 
+                   TextColor="#FFD700"
+                   FontAttributes="Bold"/>
         </Grid>
 
         <!-- Lista elementów kolekcji -->

@@ -168,6 +168,12 @@ public partial class CollectionDetailPage : ContentPage
 
             Item updatedItem = new Item(name, description, quantity, condition);
 
+            // Copy image from original item
+            updatedItem.imgBlob = item.imgBlob;
+
+            // Copy status from original item
+            updatedItem.Status = item.Status;
+
             // Copy existing properties
             updatedItem.Properties = new List<Property>(item.Properties);
 
@@ -184,6 +190,7 @@ public partial class CollectionDetailPage : ContentPage
             await EditItemCustomProperties(updatedItem);
 
             collectionList.UpdateItemInCollection(collection, item, updatedItem);
+            updatedItem.PropertyChanged += Item_PropertyChanged;
             UpdateItemsDisplay();
         }
         else
