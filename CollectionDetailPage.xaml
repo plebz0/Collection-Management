@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:Collection_Management.Models"
              x:Class="Collection_Management.CollectionDetailPage"
-             Title="Szczegóły Kolekcji">
+             Title="Szczegóły Kolekcji"
+             BackgroundColor="#F8FAFC">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -11,16 +12,27 @@
             <local:ItemStatusBackgroundConverter x:Key="ItemStatusBackgroundConverter" />
             <local:StringToEnumConverter x:Key="StringToEnumConverter" />
             <local:Base64ToImageSourceConverter x:Key="Base64ToImageSourceConverter" />
+            <local:ItemStatusToPolishConverter x:Key="ItemStatusToPolishConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,*,Auto" Padding="10">
+    <Grid RowDefinitions="Auto,*,Auto" Padding="0">
 
         <!-- Header z nazwą kolekcji -->
-        <StackLayout Grid.Row="0" Spacing="5" Margin="0,0,0,10">
-            <Label Text="{Binding Collection.Name}" FontSize="24" FontAttributes="Bold"/>
-            <Label Text="{Binding Collection.Type, StringFormat='Typ: {0}'}" FontSize="14" TextColor="Gray"/>
-        </StackLayout>
+        <Grid Grid.Row="0" 
+              BackgroundColor="#371CFC"
+              Padding="20,15,20,15"
+              RowDefinitions="Auto,Auto"
+              RowSpacing="8">
+            <Label Text="{Binding Collection.Name}" 
+                   FontSize="32" 
+                   FontAttributes="Bold"
+                   TextColor="White"/>
+            <Label Grid.Row="1"
+                   Text="{Binding Collection.Type, StringFormat='Typ: {0}'}" 
+                   FontSize="16" 
+                   TextColor="#1CD6FC"/>
+        </Grid>
 
         <!-- Lista elementów kolekcji -->
         <CollectionView Grid.Row="1" 
@@ -28,25 +40,27 @@
                         SelectionMode="Single"
                         SelectionChangedCommand="{Binding ItemSelectedCommand}"
                         SelectionChangedCommandParameter="{Binding SelectedItem, Source={x:Reference ItemsCollectionView}}"
-                        Margin="0,10">
+                        Margin="0,0"
+                       >
             <CollectionView.ItemsLayout>
-                <LinearItemsLayout Orientation="Vertical" ItemSpacing="10"/>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="12"/>
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Frame CornerRadius="8" 
+                    <Frame CornerRadius="12" 
                            Padding="15" 
-                           Margin="5,0"
+                           Margin="0,0"
                            HasShadow="True"
                            BackgroundColor="{Binding Status, Converter={StaticResource ItemStatusBackgroundConverter}}"
-                           BorderColor="{Binding Status, Converter={StaticResource ItemStatusColorConverter}}">
-                        <StackLayout Spacing="8">
+                           BorderColor="{Binding Status, Converter={StaticResource ItemStatusColorConverter}}"
+                           >
+                        <StackLayout Spacing="10">
                             <Grid ColumnDefinitions="120,*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="10">
                                 <!-- Image Section -->
                                 <StackLayout Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" 
-                                           Padding="10" 
+                                           Padding="8" 
                                            Spacing="5"
-                                           BackgroundColor="#F5F5F5"
+                                           BackgroundColor="#F0F4FF"
                                            
                                            VerticalOptions="Start"
                                            HorizontalOptions="Center">
@@ -55,67 +69,60 @@
                                            WidthRequest="100"
                                            HeightRequest="100"
                                            IsVisible="{Binding HasPicture}"/>
-                                    <Label Text="{Binding ImageDisplay}"
-                                           FontSize="11"
-                                           HorizontalTextAlignment="Center"
-                                           TextColor="#999"
-                                           IsVisible="{Binding HasPicture, Converter={StaticResource Microsoft.Maui.Controls.BoolNegationConverter}}"/>
                                 </StackLayout>
 
                                 <!-- Item Details Section -->
-                                <StackLayout Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" Spacing="3" VerticalOptions="StartAndExpand">
+                                <StackLayout Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" Spacing="6" VerticalOptions="StartAndExpand">
                                     <Label Text="{Binding Name}" 
                                            FontAttributes="Bold"
-                                           FontSize="16"
-                                           LineBreakMode="WordWrap"/>
+                                           FontSize="18"
+                                           LineBreakMode="WordWrap"
+                                           TextColor="#1C48FC"/>
                                     <Label Text="{Binding Description}" 
-                                           FontSize="12"
-                                           TextColor="Gray"
+                                           FontSize="14"
+                                           TextColor="#6180FF"
                                            LineBreakMode="WordWrap"/>
                                     <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,5,0,0">
                                         <Label Grid.Column="0"
                                                Text="{Binding Quantity, StringFormat='Ilość: {0}'}" 
-                                               FontSize="11"
-                                               TextColor="#FF9800"/>
+                                               FontSize="13"
+                                               TextColor="#9034FF"
+                                               FontAttributes="Bold"/>
                                         <Label Grid.Column="1"
                                                Text="{Binding Condition, StringFormat='Stan: {0}'}" 
-                                               FontSize="11"
-                                               TextColor="#FF9800"/>
+                                               FontSize="13"
+                                               TextColor="#9034FF"
+                                               FontAttributes="Bold"/>
                                     </Grid>
                                 </StackLayout>
 
-                                <!-- Status Picker -->
-                                <Picker Grid.Row="0" Grid.Column="0"
-                                        Title="Status"
-                                        SelectedItem="{Binding Status, Converter={StaticResource StringToEnumConverter}}"
-                                        VerticalOptions="Center"
-                                        FontSize="12"
-                                        WidthRequest="100"
-                                        IsVisible="False"/>
-
                                 <!-- Menu Button -->
                                 <Button Grid.Row="0" Grid.RowSpan="3" Grid.Column="2"
-                                        Text="..." 
+                                        Text="•••" 
                                         Clicked="OnItemMenuClicked"
-                                        FontSize="16"
-                                        WidthRequest="40"
-                                        HeightRequest="40"
-                                        CornerRadius="20"
+                                        FontSize="24"
+                                        WidthRequest="45"
+                                        HeightRequest="45"
+                                        CornerRadius="22"
                                         Padding="0"
+                                        BackgroundColor="#1CD6FC"
+                                        TextColor="White"
                                         VerticalOptions="Start"/>
 
                                 <!-- Status Picker -->
                                 <Picker Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3"
                                         Title="Status"
-                                        SelectedItem="{Binding Status, Converter={StaticResource StringToEnumConverter}}"
+                                        SelectedItem="{Binding Status, Converter={StaticResource ItemStatusToPolishConverter}}"
                                         VerticalOptions="Center"
-                                        FontSize="12"
-                                        Margin="0,5,0,0">
+                                        FontSize="14"
+                                        Margin="0,8,0,0"
+                                        BackgroundColor="#F0F4FF"
+                                        TextColor="#1C48FC">
                                     <Picker.ItemsSource>
                                         <x:Array Type="{x:Type x:String}">
-                                            <x:String>Possess</x:String>
-                                            <x:String>WantToSell</x:String>
-                                            <x:String>Sold</x:String>
+                                            <x:String>W posiadaniu</x:String>
+                                            <x:String>Chce Sprzedać</x:String>
+                                            <x:String>Sprzedane</x:String>
                                         </x:Array>
                                     </Picker.ItemsSource>
                                 </Picker>
@@ -130,9 +137,10 @@
                                 </CollectionView.ItemsLayout>
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
-                                        <Label Padding="5,0" 
-                                               FontSize="10" 
-                                               TextColor="#666"
+                                        <Label Padding="10,6" 
+                                               FontSize="12" 
+                                               TextColor="#6180FF"
+                                               BackgroundColor="#F0F4FF"
                                                Text="{Binding DisplayValue}"/>
                                     </DataTemplate>
                                 </CollectionView.ItemTemplate>
@@ -144,32 +152,67 @@
         </CollectionView>
 
         <!-- Przyciski -->
-        <Grid Grid.Row="2" ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto" Padding="10,10" ColumnSpacing="10" RowSpacing="10">
+        <Grid Grid.Row="2" ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto" Padding="10" ColumnSpacing="8" RowSpacing="8" BackgroundColor="White">
             <Button x:Name="AddItemBtn"
                     Grid.Row="0" Grid.Column="0"
-                    Text="Dodaj Element" 
+                    Text="Dodaj" 
                     FontAttributes="Bold"
+                    FontSize="14"
+                    BackgroundColor="#371CFC"
+                    TextColor="White"
+                    CornerRadius="10"
+                    Padding="8,12"
                     Clicked="OnAddItemClicked"/>
             <Button x:Name="EditItemBtn"
                     Grid.Row="0" Grid.Column="1"
                     Text="Edytuj" 
                     FontAttributes="Bold"
+                    FontSize="14"
+                    BackgroundColor="#1CD6FC"
+                    TextColor="White"
+                    CornerRadius="10"
+                    Padding="8,12"
                     Clicked="OnEditItemClicked"/>
             <Button x:Name="SummaryBtn"
                     Grid.Row="0" Grid.Column="2"
                     Text="Podsumowanie" 
                     FontAttributes="Bold"
+                    FontSize="13"
+                    BackgroundColor="#42A3FF"
+                    TextColor="White"
+                    CornerRadius="10"
+                    Padding="8,12"
                     Clicked="OnSummaryClicked"/>
             <Button x:Name="DeleteItemBtn"
                     Grid.Row="1" Grid.Column="0"
                     Text="Usuń" 
                     FontAttributes="Bold"
+                    FontSize="14"
+                    BackgroundColor="#9034FF"
+                    TextColor="White"
+                    CornerRadius="10"
+                    Padding="8,12"
                     Clicked="OnDeleteItemClicked"/>
             <Button x:Name="ManagePropertiesBtn"
                     Grid.Row="1" Grid.Column="1"
                     Text="Właściwości" 
                     FontAttributes="Bold"
+                    FontSize="14"
+                    BackgroundColor="#6180FF"
+                    TextColor="White"
+                    CornerRadius="10"
+                    Padding="8,12"
                     Clicked="OnManageCollectionPropertiesClicked"/>
+            <Button x:Name="BackBtn"
+                    Grid.Row="1" Grid.Column="2"
+                    Text="Wróć" 
+                    FontAttributes="Bold"
+                    FontSize="14"
+                    BackgroundColor="#1C48FC"
+                    TextColor="White"
+                    CornerRadius="10"
+                    Padding="8,12"
+                    Clicked="OnBackClicked"/>
         </Grid>
     </Grid>
 

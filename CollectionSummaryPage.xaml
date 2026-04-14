@@ -4,17 +4,17 @@
              x:Class="Collection_Management.CollectionSummaryPage"
              Title="Podsumowanie Kolekcji">
 
-    <Grid RowDefinitions="Auto,*,Auto" Padding="20" RowSpacing="20">
-        
+    <Grid RowDefinitions="Auto,*,Auto" Padding="20" RowSpacing="20" BackgroundColor="#F9F9F9">
+
         <!-- Header -->
-        <StackLayout Grid.Row="0" Spacing="10">
+        <StackLayout Grid.Row="0" Spacing="10" Padding="15" BackgroundColor="#371CFC">
             <Label x:Name="CollectionNameLabel" 
                    FontSize="28" 
                    FontAttributes="Bold"
-                   TextColor="#333"/>
+                   TextColor="#FFFFFF"/>
             <Label x:Name="CollectionTypeLabel" 
                    FontSize="14" 
-                   TextColor="Gray"/>
+                   TextColor="#1CD6FC"/>
         </StackLayout>
 
         <!-- Statistics Cards -->
@@ -25,17 +25,17 @@
                 <Frame CornerRadius="10" 
                        Padding="20" 
                        HasShadow="True"
-                       BorderColor="#E0E0E0"
-                       BackgroundColor="#F9F9F9">
+                       BorderColor="#371CFC"
+                       BackgroundColor="#F3E5F5">
                     <StackLayout Spacing="10">
                         <Label Text="Łączna liczba przedmiotów" 
                                FontSize="14" 
-                               TextColor="Gray"
+                               TextColor="#371CFC"
                                FontAttributes="Bold"/>
                         <Label x:Name="TotalItemsLabel" 
                                FontSize="36" 
                                FontAttributes="Bold"
-                               TextColor="#333"/>
+                               TextColor="#371CFC"/>
                     </StackLayout>
                 </Frame>
 
@@ -43,20 +43,20 @@
                 <Frame CornerRadius="10" 
                        Padding="20" 
                        HasShadow="True"
-                       BorderColor="#4CAF50"
-                       BackgroundColor="#E8F5E9">
+                       BorderColor="#42A3FF"
+                       BackgroundColor="#E3F2FD">
                     <StackLayout Spacing="10">
-                        <Label Text="Posiadane przedmioty" 
+                        <Label Text="W posiadaniu" 
                                FontSize="14" 
-                               TextColor="#2E7D32"
+                               TextColor="#1C48FC"
                                FontAttributes="Bold"/>
                         <Label x:Name="PossessLabel" 
                                FontSize="36" 
                                FontAttributes="Bold"
-                               TextColor="#2E7D32"/>
+                               TextColor="#1C48FC"/>
                         <Label x:Name="PossessPercentageLabel" 
                                FontSize="12" 
-                               TextColor="#558B2F"/>
+                               TextColor="#42A3FF"/>
                     </StackLayout>
                 </Frame>
 
@@ -64,20 +64,20 @@
                 <Frame CornerRadius="10" 
                        Padding="20" 
                        HasShadow="True"
-                       BorderColor="#FF9800"
-                       BackgroundColor="#FFF3E0">
+                       BorderColor="#9034FF"
+                       BackgroundColor="#F3E5F5">
                     <StackLayout Spacing="10">
-                        <Label Text="Przedmioty do sprzedania" 
+                        <Label Text="Chce Sprzedać" 
                                FontSize="14" 
-                               TextColor="#E65100"
+                               TextColor="#6180FF"
                                FontAttributes="Bold"/>
                         <Label x:Name="WantToSellLabel" 
                                FontSize="36" 
                                FontAttributes="Bold"
-                               TextColor="#E65100"/>
+                               TextColor="#6180FF"/>
                         <Label x:Name="WantToSellPercentageLabel" 
                                FontSize="12" 
-                               TextColor="#BF360C"/>
+                               TextColor="#9034FF"/>
                     </StackLayout>
                 </Frame>
 
@@ -85,20 +85,20 @@
                 <Frame CornerRadius="10" 
                        Padding="20" 
                        HasShadow="True"
-                       BorderColor="#9C27B0"
-                       BackgroundColor="#F3E5F5">
+                       BorderColor="#1CD6FC"
+                       BackgroundColor="#E0F2F1">
                     <StackLayout Spacing="10">
-                        <Label Text="Sprzedane przedmioty" 
+                        <Label Text="Sprzedane" 
                                FontSize="14" 
-                               TextColor="#6A1B9A"
+                               TextColor="#00695C"
                                FontAttributes="Bold"/>
                         <Label x:Name="SoldLabel" 
                                FontSize="36" 
                                FontAttributes="Bold"
-                               TextColor="#6A1B9A"/>
+                               TextColor="#00695C"/>
                         <Label x:Name="SoldPercentageLabel" 
                                FontSize="12" 
-                               TextColor="#8E24AA"/>
+                               TextColor="#1CD6FC"/>
                     </StackLayout>
                 </Frame>
 
@@ -109,6 +109,8 @@
         <Button Grid.Row="2"
                 Text="Wróć"
                 FontAttributes="Bold"
+                BackgroundColor="#1C48FC"
+                TextColor="#FFFFFF"
                 Clicked="OnBackClicked"/>
 
     </Grid>

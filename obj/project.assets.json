@@ -30332,5 +30332,13 @@
         "#import": []
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1900",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Podczas pobierania danych o lukach w zabezpieczeniach pakietu wystąpił błąd: Nie można załadować indeksu usługi dla źródła https://api.nuget.org/v3/index.json."
+    }
+  ]
 }

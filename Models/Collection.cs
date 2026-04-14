@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Text;
+
 
 namespace Collection_Management.Models
 {
@@ -41,11 +40,13 @@ namespace Collection_Management.Models
             {
                 string propsData = string.Join(";", PropertiesTypes.Select(p => $"{p.Key}:{p.Value}"));
 
-                // Dodaj enum wartości jeśli istnieją
+                // Add enum values if they exist
                 if (EnumPropertiesValues != null && EnumPropertiesValues.Count > 0)
                 {
                     string enumData = string.Join("|", EnumPropertiesValues.Select(e => 
                         $"{e.Key}={string.Join(",", e.Value)}"));
+
+                        // KLUCZ=ENUM1,ENUM2,ENUM3|KLUCZ=ENUM1,ENUM2,ENUM3
                     return $"{baseData}|{propsData}|{enumData}";
                 }
 
@@ -62,7 +63,7 @@ namespace Collection_Management.Models
             {
                 Collection collection = new Collection(parts[0], parts[1]);
 
-                // Wczytaj definicje właściwości jeśli istnieją
+                // Load property definitions if they exist
                 if (parts.Length > 2 && !string.IsNullOrWhiteSpace(parts[2]))
                 {
                     string[] propsList = parts[2].Split(';');
@@ -79,7 +80,7 @@ namespace Collection_Management.Models
                     }
                 }
 
-                // Wczytaj enum wartości jeśli istnieją
+                // Load enum values if they exist
                 if (parts.Length > 3 && !string.IsNullOrWhiteSpace(parts[3]))
                 {
                     for(int i = 3; i < parts.Length; i++)
@@ -148,6 +149,65 @@ namespace Collection_Management.Models
             }
 
             return property;
+        }
+
+        // Sets the enum values for a property and updates the EnumPropertiesValues dictionary
+        public void SetEnumPropertyValues(string propertyName, List<string> values)
+        {
+            if (EnumPropertiesValues.ContainsKey(propertyName))
+            {
+                EnumPropertiesValues[propertyName] = values;
+            }
+            else
+            {
+                EnumPropertiesValues.Add(propertyName, values);
+            }
+        }
+
+        // Changes the type of an existing property
+        public void ChangePropertyType(string propertyName, PropertyType newType)
+        {
+            if (PropertiesTypes.ContainsKey(propertyName))
+            {
+                PropertiesTypes[propertyName] = newType;
+
+                // If changing to Enum type, add empty enum values if not exists
+                if (newType == PropertyType.Enum && !EnumPropertiesValues.ContainsKey(propertyName))
+                {
+                    EnumPropertiesValues.Add(propertyName, new List<string>());
+                }
+                // If changing away from Enum type, remove enum values
+                else if (newType != PropertyType.Enum && EnumPropertiesValues.ContainsKey(propertyName))
+                {
+                    EnumPropertiesValues.Remove(propertyName);
+                }
+            }
+        }
+
+        // Removes a property from the collection and all items
+        public void RemoveProperty(string propertyName)
+        {
+            // Remove property type definition
+            if (PropertiesTypes.ContainsKey(propertyName))
+            {
+                PropertiesTypes.Remove(propertyName);
+            }
+
+            // Remove enum values if exists
+            if (EnumPropertiesValues.ContainsKey(propertyName))
+            {
+                EnumPropertiesValues.Remove(propertyName);
+            }
+
+            // Remove property from all items
+            foreach (var item in Items)
+            {
+                var prop = item.Properties.FirstOrDefault(p => p.Name == propertyName);
+                if (prop != null)
+                {
+                    item.Properties.Remove(prop);
+                }
+            }
         }
 
         public void AddItem(string name, string description = "", int quantity = 1, string condition = "Good")
