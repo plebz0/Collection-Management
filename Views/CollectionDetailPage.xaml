@@ -18,7 +18,7 @@
 
     <Grid RowDefinitions="Auto,*,Auto" Padding="0">
 
-        <!-- Header z nazwą kolekcji -->
+        <!-- Header -->
         <Grid Grid.Row="0" 
               BackgroundColor="#371CFC"
               Padding="20,15,20,15"
@@ -39,7 +39,7 @@
                    FontAttributes="Bold"/>
         </Grid>
 
-        <!-- Lista elementów kolekcji -->
+        <!-- Elements of collection -->
         <CollectionView Grid.Row="1" 
                         x:Name="ItemsCollectionView"
                         SelectionMode="Single"
