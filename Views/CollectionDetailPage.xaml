@@ -133,7 +133,7 @@
                                 </Picker>
                             </Grid>
 
-                            <!-- Właściwości elementu -->
+                            <!-- Properties of element -->
                             <CollectionView x:Name="PropertiesCollectionView"
                                           ItemsSource="{Binding Properties}"
                                           SelectionMode="None">
@@ -156,7 +156,7 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <!-- Przyciski -->
+        <!-- Buttons -->
         <Grid Grid.Row="2" ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto" Padding="10" ColumnSpacing="8" RowSpacing="8" BackgroundColor="White">
             <Button x:Name="AddItemBtn"
                     Grid.Row="0" Grid.Column="0"
